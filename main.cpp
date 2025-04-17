@@ -9,23 +9,25 @@ int main(int argc, char** argv)
     if (err_code)
         return ERRVAL;
 
-    void (*draw_type)(Window*);
+    void (*calc_values)(Window*);
     bool graph = false;
-    func_selection(argc, argv, &graph, &draw_type);
+    processing_func_selection(argc, argv, &graph, &calc_values);
     if (err_code)
         return ERRVAL;
 
-    sf::Clock main_clock;
+    long long int time_start = ticks();
 
     if (graph)
-        win_actions(draw_type, &mdb_win);
+        draw_graph(calc_values, &mdb_win);
     else
-        draw_type(&mdb_win);
+        calc_values(&mdb_win);
+        
 
     win_dtor(&mdb_win);
 
-    sf::Time prog_time = main_clock.getElapsedTime();
-    printf("prog time: %lg sec\n", prog_time.asSeconds());
+    long long int time_end = ticks();
+    long long int time = time_end - time_start;
+    printf("ticks: %lld\n", time);
 
     return 0;   
 }
