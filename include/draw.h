@@ -36,9 +36,9 @@ const float  DELTA_ADD    = 0.0003;
 const float  CENTER_DELTA =  0.3;
 const int    ERRVAL       =  303;
 
-void draw_mandelbrot(Window *const mdb_win);
-void draw_mandelbrot_array(Window *const mdb_win);
-void draw_mandelbrot_SIMD(Window *const mdb_win);
+void simple_mandelbrot_processing(Window *const mdb_win);
+void array_mandelbrot_processing(Window *const mdb_win);
+void SIMD_mandelbrot_processing(Window *const mdb_win);
 
 int add_FPS(sf::Clock& clock, sf::Time& current_time, sf::Time& previous_time, sf::RenderWindow& win);
 

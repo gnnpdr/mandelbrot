@@ -5,6 +5,8 @@ static void temporary_stop_main_loop(sf::RenderWindow& win);
 
 int win_ctor(Window *const mdb_win)
 {
+    assert(mdb_win);
+
     int* pixel_arr = (int*)calloc(HEIGHT * WIDTH, sizeof(int));
     if (!pixel_arr)
     {
@@ -26,8 +28,11 @@ void win_dtor(Window* mdb_win)
     free(mdb_win->pixel_arr);
 }
 
-int win_actions(void (*draw_type)(Window*), Window *const mdb_win)
+int draw_graph(void (*calc_values)(Window*), Window *const mdb_win)
 {
+    assert(calc_values);
+    assert(mdb_win);
+
     sf::RenderWindow win (sf::VideoMode(WIDTH, HEIGHT), "Mandelbrot");
 
     sf::Image image;
@@ -53,7 +58,7 @@ int win_actions(void (*draw_type)(Window*), Window *const mdb_win)
         sf::Keyboard keyboard;
         camera_control(keyboard, mdb_win);
     
-        draw_type(mdb_win);    
+        calc_values(mdb_win);    
     
         texture.update((sf::Uint8*)(mdb_win->pixel_arr), WIDTH, HEIGHT, 0, 0);
         win.clear();
@@ -71,6 +76,8 @@ int win_actions(void (*draw_type)(Window*), Window *const mdb_win)
 
 void camera_control(sf::Keyboard& keyboard, Window *const mdb_win)
 {
+    assert(mdb_win);
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))    mdb_win->x_center -= CENTER_DELTA;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))   mdb_win->x_center += CENTER_DELTA;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))      mdb_win->y_center -= CENTER_DELTA;
@@ -80,8 +87,11 @@ void camera_control(sf::Keyboard& keyboard, Window *const mdb_win)
 }
 
 
-int func_selection(int argc, char** argv, bool* graph, void (**draw_type)(Window*))
+int processing_func_selection(int argc, char** argv, bool* graph, void (**draw_type)(Window*))
 {
+    assert(argv);
+    assert(draw_type);
+
     if (argc == 1 || argc > 3)
     {
         printf("wrong arguments amount\n");
@@ -96,13 +106,13 @@ int func_selection(int argc, char** argv, bool* graph, void (**draw_type)(Window
     switch(opt_type)
     {
         case (NO_OPT):
-            *draw_type = draw_mandelbrot;
+            *draw_type = simple_mandelbrot_processing;
             break;
         case (ARRAY):
-            *draw_type = draw_mandelbrot_array;
+            *draw_type = array_mandelbrot_processing;
             break;
         case (INTRIN):
-            *draw_type = draw_mandelbrot_SIMD;
+            *draw_type = SIMD_mandelbrot_processing;
             break;
         default:
             printf("error optimization type\n");
@@ -118,4 +128,20 @@ void temporary_stop_main_loop(sf::RenderWindow& win)
 
     while (true) 
         if (win.waitEvent(event) && event.type == sf::Event::GainedFocus) return;
+}
+
+long long int ticks()
+{
+    long long int res = 0;
+    asm(".intel_syntax noprefix\n\t" 
+        "rdtsc\n\t"
+        "shl rdx, 32\n\t"
+        "add rax, rdx\n\t"
+        ".att_syntax prefix\n\t"
+        :"=a"(res)
+        :
+        :"%rdx"
+    );
+
+    return res;
 }

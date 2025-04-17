@@ -33,7 +33,7 @@ int add_FPS(sf::Clock& clock, sf::Time& current_time, sf::Time& previous_time, s
     return FPS_int;
 }
 
-void draw_mandelbrot(Window *const mdb_win)
+void simple_mandelbrot_processing(Window *const mdb_win)
 {
     assert(mdb_win);
 
@@ -68,7 +68,7 @@ void draw_mandelbrot(Window *const mdb_win)
     mdb_win->pixel_arr = pixel_arr;
 }
 
-void draw_mandelbrot_array(Window *const mdb_win)
+void array_mandelbrot_processing(Window *const mdb_win)
 {
     assert(mdb_win);
 
@@ -138,7 +138,7 @@ void draw_mandelbrot_array(Window *const mdb_win)
     mdb_win->pixel_arr = pixel_arr;
 }
 
-void draw_mandelbrot_SIMD(Window *const mdb_win)
+void SIMD_mandelbrot_processing(Window *const mdb_win)
 {
     assert(mdb_win);
 

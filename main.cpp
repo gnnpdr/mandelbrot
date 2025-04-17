@@ -15,19 +15,20 @@ int main(int argc, char** argv)
     if (err_code)
         return ERRVAL;
 
-    long long int time_start = ticks();
-
     if (graph)
         draw_graph(calc_values, &mdb_win);
     else
+    {
+        long long int time_start = ticks();
+
         calc_values(&mdb_win);
-        
 
-    win_dtor(&mdb_win);
+        long long int time_end = ticks();
+        long long int time = time_end - time_start;
+        printf("ticks: %lld\n", time);
+    }
 
-    long long int time_end = ticks();
-    long long int time = time_end - time_start;
-    printf("ticks: %lld\n", time);
+    win_dtor(&mdb_win);    
 
     return 0;   
 }
